@@ -1,9 +1,9 @@
 {
-	"name": "ClassNameHere",
+	"name": "Html Record Summary",
 
-	"namespace": "Stanford\\ClassNameHere",
+	"namespace": "Stanford\\HtmlRecordSummary",
 
-	"description": "A template for a REDCap External Module",
+	"description": "Create a HTML block to summarize data in a record.  This summary can be converted into a PDF and/or be piped across the project",
 
 	"documentation": "README.md",
 
@@ -12,20 +12,28 @@
 			"name": "Andrew Martin",
 			"email": "andy123@stanford.edu",
 			"institution": "Stanford University"
-		}
+		},
+        {
+            "name": "Jae Lee",
+            "email": "jael@stanford.edu",
+            "institution": "Stanford University"
+        }
 	],
+    "framework-version": 5,
 
 	"permissions": [
-		"redcap_module_system_enable",
-		"redcap_module_project_enable",
-		"redcap_module_save_configuration"
+        "redcap_save_record"
 	],
-	
-	"enable-every-page-hooks-on-system-pages": false,	
+
+	"enable-every-page-hooks-on-system-pages": false,
 
 	"links": {
 		"project": [
-
+            {
+                "name": "Test",
+                "icon": "gear",
+                "url": "pages/test.php"
+            }
 		],
 		"control-center": [
 
@@ -33,20 +41,127 @@
 	},
 
 	"no-auth-pages": [
-
+        "pages/renderHtml"
 	],
 
 	"project-settings": [
+        {
+            "key": "instance",
+            "name": "<b>Define 1 or more HTML Reports</b>",
+            "required": true,
+            "type": "sub_settings",
+            "repeatable": true,
+            "sub_settings": [
+                {
+                    "key": "template-name",
+                    "name": "<b>Template Name</b><br>This is the saved HTML template",
+                    "required": true,
+                    "type": "textarea"
+                },
+                {
+                    "key": "html-framework",
+                    "name": "<b>HTML Framework</b><br>What HTML framework do you want to use for rendering this page for PDF/Preview",
+                    "required": false,
+                    "type": "dropdown",
+                    "choices": [
+                        {
+                            "name": "REDCap",
+                            "value": "default"
+                        },
+                        {
+                            "name": "Boostrap 4",
+                            "value": "bs4"
+                        },
+                        {
+                            "name": "None",
+                            "value": "none"
+                        }
+                    ]
+                },
+                {
+                    "key": "html-template",
+                    "name": "<b>HTML</b><br>This is the saved HTML template (for viewing/testing only)",
+                    "required": false,
+                    "type": "textarea"
+                },
+                {
+                    "key": "css-template",
+                    "name": "<b>CSS</b><br>This is the saved CSS template (for viewing/testing only)",
+                    "required": false,
+                    "type": "textarea"
+                },
+                {
+                    "key": "js-template",
+                    "name": "<b>JS</b><br>This is the saved JS template (for viewing/testing only)",
+                    "required": false,
+                    "type": "textarea"
+                },
+                {
+                    "key": "update-logic",
+                    "name": "<b>Update Logic</b><br>Re-evaluate and save the summary when this expression is true",
+                    "required": false,
+                    "type": "textarea"
+                },
+                {
+                    "key": "update-forms",
+                    "name": "<b>Update Forms</b><br>If specified, the above logic will only be evaluated when these forms are saved",
+                    "required": false,
+                    "repeatable": true,
+                    "type": "form-list"
+                },
+                {
+                    "key": "save-field",
+                    "name": "<b>Save Field</b><br>Specify a field in the record where the html from this page will be saved",
+                    "required": false,
+                    "type": "field-list"
+                },
+                {
+                    "key": "save-field-event-id",
+                    "name": "<b>Save Event</b><br>Specify the event where the above save-field resides",
+                    "required": false,
+                    "type": "event-list"
+                },
+                {
+                    "key": "pdf-field",
+                    "name": "<b>PDF Field</b><br>Specify a file upload field in the record where a PDF version will be saved",
+                    "required": false,
+                    "type": "field-list"
+                },
+                {
+                    "key": "save-pdf-event-id",
+                    "name": "<b>Save Event</b><br>Specify the event where the above save PDF field resides",
+                    "required": false,
+                    "type": "event-list"
+                }
+            ]
+        },
 		{
 			"key": "enable-project-debug-logging",
 			"name": "<b>Enable Debug Logging</b><br><i>(optional)</i> Requires installation and configuration of emLogger",
 			"required": false,
 			"type": "checkbox"
-		}
-	],
-
+		},
+        {
+            "key": "replace-base-url",
+            "name": "<b>Replace Base URL</b><br><i>(optional for debugging only)</i> To make renter endpoint visible for debugging, fire up a NGROK url and enter the replacement for your REDCap_base_url (<i>e.g.</i> <code>http://2bdc61f39ddb.ngrok.io/</code>)",
+            "required": false,
+            "type": "text"
+        }
+    ],
 
 	"system-settings": [
+        {
+            "key": "gcp-function-url",
+            "name": "<b>HTML to PDF requires a GCP cloud function</b><br>see: https://github.com/susom/html2pdf_cloud_function",
+            "required": false,
+            "type": "text"
+        },
+        {
+            "key": "gcp-function-key",
+            "name": "<b>GCP Key</b><br>Accessing the URL above requires a JSON key file for authentication",
+            "required": false,
+            "type": "textarea"
+        },
 		{
 			"key": "enable-system-debug-logging",
 			"name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",
