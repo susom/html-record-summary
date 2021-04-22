@@ -67,7 +67,7 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
 
             # Save the summary as PDF to file if supplied
             $pdfField = $instance['pdf-field'];
-            $pdfEventId = $instance['pdf-event-id'];
+            $pdfEventId = $instance['save-pdf-event-id'];
 
             // Register a viewing token for the remote pdf converter
             $hash = $this->registerView($name, $summary);
