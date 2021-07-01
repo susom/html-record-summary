@@ -13,3 +13,12 @@ The goal of this project is to build HTML summaries that can be
 1. Export the private key for the service account
 
 
+## To set up locally
+1. In server settings, add entries to
+   * GCP cloud function
+   * GCP Key
+2. ngrok local redcap
+   > ngrok http 80
+3. In project settings, add entries:
+   * Replace Base URL: ngrok forwarding URL
+

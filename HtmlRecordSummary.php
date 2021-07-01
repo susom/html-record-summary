@@ -30,6 +30,13 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
         foreach ($instances as $i => $instance) {
             $name = $instance['template-name'];
 
+            # Verify that it's in the right event
+            if ($Proj->longitudinal) {
+                $formEvent = $instance['update-form-event-id'];
+                if ($formEvent !== $event_id) continue;
+            }
+
+
             # Verify save-form if set or continue
             $updateForms = array_filter($instance['update-forms']);
             if (!empty($updateForms)) {
