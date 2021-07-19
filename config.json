@@ -30,7 +30,7 @@
 	"links": {
 		"project": [
             {
-                "name": "Test",
+                "name": "HTMLRecordSummary: Test",
                 "icon": "gear",
                 "url": "pages/test.php"
             }
@@ -108,6 +108,12 @@
                     "required": false,
                     "repeatable": true,
                     "type": "form-list"
+                },
+                {
+                    "key": "update-form-event-id",
+                    "name": "<b>Update Forms Event</b><br>Specify the event where the above forms reside",
+                    "required": false,
+                    "type": "event-list"
                 },
                 {
                     "key": "save-field",
