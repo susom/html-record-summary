@@ -138,6 +138,12 @@
                     "name": "<b>Save Event</b><br>Specify the event where the above save PDF field resides",
                     "required": false,
                     "type": "event-list"
+                },
+                {
+                    "key": "trigger-save-record-hook",
+                    "name": "<b>Trigger Save Record Hook</b><br>Trigger the record save hook so any subsequent EMs/hooks can be triggered.",
+                    "required": false,
+                    "type": "checkbox"
                 }
             ]
         },

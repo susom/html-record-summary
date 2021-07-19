@@ -21,4 +21,6 @@ The goal of this project is to build HTML summaries that can be
    > ngrok http 80
 3. In project settings, add entries:
    * Replace Base URL: ngrok forwarding URL
+     (ex: '
+     http://11a1a1a11a11.ngrok.io/' Don't forget the trailing slash!)
 

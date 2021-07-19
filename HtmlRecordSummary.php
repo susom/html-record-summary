@@ -21,8 +21,13 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
     public $instance;
     private const EXPIRY = "+3 minutes";
 
-	public function redcap_save_record ( $project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
-        $this->emDebug(__FUNCTION__);
+	public function redcap_save_record ( $project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
+    {
+        //we need to wait for summarize to finish execution
+        $this->delayModuleExecution();
+
+        $this->emDebug("++++++++++++" . __FUNCTION__ . "  : " . $instrument);
+
 
         global $Proj;
 
@@ -61,8 +66,8 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
                     $saveField => $summary
                 ];
                 if ($Proj->longitudinal) {
-                    $saveEvent = $instance['save-field-event_id'];
-                    $payload['redcap_event_name'] = $saveEvent;
+                    $saveEvent = $instance['save-field-event-id'];
+                    $payload['redcap_event_name'] = REDCap::getEventNames(true,false, $saveEvent);
                 }
             }
             $q = REDCap::saveData('json', json_encode(array($payload)), 'overwrite');
@@ -157,8 +162,32 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
                 \REDCap::logEvent($this->getModuleName(), $pdfField .
                     " updated from template " . $name, "", $record, $event_id);
                 $this->emDebug("PDF Updated for record $record with $name summary");
-            } else {
-                $this->emError("Error saving updated pdf", $data, $result['errors']);
+
+                //trigger save hook. saveData does not trigger the redcap_save_record hook. Need trigger to start cupsPrint
+                $trigger_save = $instance['trigger-save-record-hook'];
+
+                if ($trigger_save) {
+
+                    //use metadata to derive the instrument of the $pdfField
+                    $pdf_trigger_instrument = $Proj->metadata[$pdfField]['form_name'];
+                    $pdf_result = \Hooks::call('redcap_save_record',
+                                               array($project_id,
+                                                   $record,
+                                                   $pdf_trigger_instrument,
+                                                   $event_id,
+                                                   null, //$group_id,
+                                                   null, //$survey_hash,
+                                                   null, // $response_id,
+                                                   null //        $repeat_instance
+                                               )
+                    );
+                    //$this->emDebug('PDF Save Hook Result',$result);
+                    if (empty($pdf_result['errors'])) {
+                        $this->emError("Error triggering pdf print", $data, $pdf_result['errors']);
+                    }
+                } else {
+                    $this->emError("Error saving updated pdf", $data, $result['errors']);
+                }
             }
         }
     }
