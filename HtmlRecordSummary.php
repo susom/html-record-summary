@@ -23,13 +23,10 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
 
 	public function redcap_save_record ( $project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
     {
-        //we need to wait for summarize to finish execution
-        $this->delayModuleExecution();
-
-        $this->emDebug("++++++++++++" . __FUNCTION__ . "  : " . $instrument);
-
-
         global $Proj;
+        //we need to wait for summarize to finish execution
+        $delay_success = $this->delayModuleExecution($this->getPrefix(), $this->getModuleVersion());
+        if ($delay_success) return;
 
         $instances = array_filter($this->getSubSettings("instance"));
         foreach ($instances as $i => $instance) {
@@ -40,7 +37,7 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
                 $formEvent = $instance['update-form-event-id'];
                 if ($formEvent !== $event_id) continue;
             }
-
+            $this->emDebug("++++++++++++" . __FUNCTION__ . "  : " . $instrument . ": EVENT: "  . $event_id);
 
             # Verify save-form if set or continue
             $updateForms = array_filter($instance['update-forms']);
@@ -52,9 +49,9 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
             $updateLogic = $instance['update-logic'];
             if (!empty($updateLogic)) {
                 $exp = REDCap::evaluateLogic($updateLogic, $project_id, $record, $event_id, $repeat_instance);
-                if ( $exp === false ) continue;
+                if ( $exp == false ) continue;
             }
-            $this->emDebug("Running: $name");
+            $this->emDebug("Running EM config instance: $name");
 
             $summary = $this->applyTemplate($record, $event_id, $repeat_instance, $instance);
 
@@ -185,8 +182,6 @@ class HtmlRecordSummary extends \ExternalModules\AbstractExternalModule {
                     if (empty($pdf_result['errors'])) {
                         $this->emError("Error triggering pdf print", $data, $pdf_result['errors']);
                     }
-                } else {
-                    $this->emError("Error saving updated pdf", $data, $result['errors']);
                 }
             }
         }
